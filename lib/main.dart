@@ -21,7 +21,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       
       appBar: AppBar(
-        title: Text('Accueil'),
+        title: const Text('Accueil'),
       ),
       body: Center(
         child: Column(
@@ -34,9 +34,9 @@ class HomePage extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => EtudiantForm()),
                 );
               },
-              child: Text('Etudiant'),
+              child: const Text('Etudiant'),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -44,7 +44,7 @@ class HomePage extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => EnseignantForm()),
                 );
               },
-              child: Text('Enseignant'),
+              child: const Text('Enseignant'),
             ),
           ],
         ),
