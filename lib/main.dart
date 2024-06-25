@@ -9,8 +9,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Formulaires d\'enregistrement',
-      home: HomePage(),
+      title: 'SCOOLWAR',
+      home: SplashScreen(),
     );
   }
 }
@@ -19,32 +19,57 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       appBar: AppBar(
-        title: const Text('Accueil'),
+        title: Center(child: const Text('Continuer en tant que ?')),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => EtudiantForm()),
                 );
               },
-              child: const Text('Etudiant'),
+              icon: const Icon(Icons.person),
+              label: const Text('Etudiant',style: TextStyle(color: Colors.white),),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                iconColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32.0,
+                  vertical: 16.0,
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             const SizedBox(height: 16.0),
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => EnseignantForm()),
                 );
               },
-              child: const Text('Enseignant'),
+              icon: const Icon(Icons.person),
+              label: const Text('Enseignant',style: TextStyle(color: Colors.white),),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                iconColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32.0,
+                  vertical: 16.0,
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),
@@ -67,25 +92,56 @@ class _EtudiantFormState extends State<EtudiantForm> {
   String _sexe = '';
   String _motDePasse = '';
 
-  void _submitEtudiantForm() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState?.save();
-      // Ici, vous pouvez ajouter la logique pour envoyer les données du formulaire
-      print('Nom : $_nom');
-      print('Filière : $_filiere');
-      print('Niveau : $_niveau');
-      print('Email : $_email');
-      print('Matricule : $_matricule');
-      print('Sexe : $_sexe');
-      print('Mot de passe : $_motDePasse');
+void _submitEtudiantForm() {
+  if (_formKey.currentState!.validate()) {
+    _formKey.currentState?.save();
 
-      // Naviguer vers la nouvelle page de menu
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => MenuPage()),
-      );
-    }
+    // Créer un Map pour stocker les informations du formulaire
+    Map<String, dynamic> formData = {
+      'Nom': _nom,
+      'Filière': _filiere,
+      'Niveau': _niveau,
+      'Email': _email,
+      'Matricule': _matricule,
+      'Sexe': _sexe,
+      'Mot de passe': _motDePasse,
+    };
+
+    // Afficher les informations du formulaire à l'écran
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Informations du formulaire'),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (MapEntry entry in formData.entries)
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text('${entry.key} : ${entry.value}'),
+                ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Naviguer vers la nouvelle page de menu
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MenuPage()),
+                );
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -93,135 +149,197 @@ class _EtudiantFormState extends State<EtudiantForm> {
       appBar: AppBar(
         title: const Text('Enregistrement Étudiant'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Champs du formulaire...
-              
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Nom',
+      body:
+       SingleChildScrollView(
+         child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Champs du formulaire...
+                const Center(
+                  child: Icon(
+                    Icons.person_add,
+                    size: 60,
+                    color: Color.fromARGB(255, 203, 136, 206),
+                  ),
                 ),
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Veuillez entrer votre nom';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _nom = value!;
-                },
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Filière',
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Nom',
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.purple,
+                        width: 2.0
+                      )
+                    )
+                  ),
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Veuillez entrer votre nom';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _nom = value!;
+                  },
                 ),
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Veuillez entrer votre filière';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _filiere = value!;
-                },
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Niveau',
+                const SizedBox(height: 16.0),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Filière',
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.purple,
+                        width: 2.0
+                      )
+                    )
+                  ),
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Veuillez entrer votre filière';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _filiere = value!;
+                  },
                 ),
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Veuillez entrer votre niveau';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _niveau = value!;
-                },
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Email',
+                const SizedBox(height: 16.0),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Niveau',
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.purple,
+                        width: 2.0
+                      )
+                    )
+                  ),
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Veuillez entrer votre niveau';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _niveau = value!;
+                  },
                 ),
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Veuillez entrer votre email';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _email = value!;
-                },
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Matricule',
+                const SizedBox(height: 16.0),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.purple,
+                        width: 2.0
+                      )
+                    )
+                  ),
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Veuillez entrer votre email';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _email = value!;
+                  },
                 ),
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Veuillez entrer votre matricule';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _matricule = value!;
-                },
-              ),
-              const SizedBox(height: 16.0),
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
-                  labelText: 'Sexe',
+                const SizedBox(height: 16.0),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Matricule',
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.purple,
+                        width: 2.0
+                      )
+                    )
+                  ),
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Veuillez entrer votre matricule';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _matricule = value!;
+                  },
                 ),
-                items: ['Masculin', 'Féminin'].map((sexe) {
-                  return DropdownMenuItem<String>(
-                    value: sexe,
-                    child: Text(sexe),
-                  );
-                }).toList(),
-                validator: (value) {
-                  if (value == null) {
-                    return 'Veuillez sélectionner votre sexe';
-                  }
-                  return null;
-                },
-                onChanged: (value) {
-                  _sexe = value!;
-                },
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Mot de passe',
+                const SizedBox(height: 16.0),
+                DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                    labelText: 'Sexe',
+                  ),
+                  items: ['Masculin', 'Féminin'].map((sexe) {
+                    return DropdownMenuItem<String>(
+                      value: sexe,
+                      child: Text(sexe),
+                    );
+                  }).toList(),
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Veuillez sélectionner votre sexe';
+                    }
+                    return null;
+                  },
+                  onChanged: (value) {
+                    _sexe = value!;
+                  },
                 ),
-                obscureText: true,
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Veuillez entrer un mot de passe';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _motDePasse = value!;
-                },
+                const SizedBox(height: 16.0),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Mot de passe',
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.purple,
+                        width: 2.0
+                      )
+                    )
+                  ),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Veuillez entrer un mot de passe';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _motDePasse = value!;
+                  },
+                ),
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: _submitEtudiantForm,
+                  style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                iconColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32.0,
+                  vertical: 16.0,
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: _submitEtudiantForm,
-                child: const Text('Enregistrer'),
-              ),
-            ],
+                  
+                  child: const Text('Enregistrer',
+                    style: TextStyle(
+                    color: Colors.white
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+               ),
+       ),
     );
   }
 }
@@ -233,32 +351,35 @@ class MenuPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Menu Étudiant'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                // Logique pour suivre un cours
-              },
-              child: const Text('Suivre un cours'),
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                // Logique pour suivre une évaluation
-              },
-              child: const Text('Suivre une évaluation'),
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                // Logique pour suivre un travail dirigé
-              },
-              child: const Text('Suivre un travail dirigé'),
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  // Logique pour suivre un cours
+                },
+                child: const Text('Suivre un cours'),
+              ),
+              const SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: () {
+                  // Logique pour suivre une évaluation
+                },
+                child: const Text('Suivre une évaluation'),
+              ),
+              const SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: () {
+                  // Logique pour suivre un travail dirigé
+                },
+                child: const Text('Suivre un travail dirigé'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -301,63 +422,105 @@ class _EnseignantFormState extends State<EnseignantForm> {
       appBar: AppBar(
         title: const Text('Enregistrement Enseignant'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Nom',
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Center(
+                    child: Icon(
+                      Icons.supervisor_account_outlined,
+                      size: 60,
+                      color: Color.fromARGB(255, 203, 136, 206),
+                    ),
+                  ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Nom',
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.purple,
+                          width: 2.0
+                        )
+                      )
+                  ),
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Veuillez entrer le nom de l\'enseignant';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _nom = value!;
+                  },
                 ),
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Veuillez entrer le nom de l\'enseignant';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _nom = value!;
-                },
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Unité d\'enseignement',
+                const SizedBox(height: 16.0),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Unité d\'enseignement',
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.purple,
+                          width: 2.0
+                        )
+                      )
+                  ),
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Veuillez entrer l\'unité d\'enseignement';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _uniteDenseignement = value!;
+                  },
                 ),
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Veuillez entrer l\'unité d\'enseignement';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _uniteDenseignement = value!;
-                },
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Code de l\'enseignant',
+                const SizedBox(height: 16.0),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Code de l\'enseignant',
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.purple,
+                          width: 2.0
+                        )
+                      )
+                  ),
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Veuillez entrer le code de l\'enseignant';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _codeEnseignant = value!;
+                  },
                 ),
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Veuillez entrer le code de l\'enseignant';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _codeEnseignant = value!;
-                },
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: _submitEnseignantForm,
-                child: const Text('Enregistrer'),
-              ),
-            ],
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: _submitEnseignantForm,
+                  child: const Text('Enregistrer',
+                  style: TextStyle(
+                    color: Colors.white
+                  ),),
+                  style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  iconColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32.0,
+                    vertical: 16.0,
+                  ),
+                  textStyle: const TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -409,6 +572,36 @@ class EnseignantMenu extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class SplashScreen extends StatefulWidget {
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _navigateToHome();
+  }
+
+  _navigateToHome() async {
+    await Future.delayed(Duration(milliseconds: 5000), () {});
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Image.asset('assets/image1.jpg'), // Assurez-vous que votre logo est dans le dossier assets
       ),
     );
   }
